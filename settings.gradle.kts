@@ -21,3 +21,5 @@ dependencyResolutionManagement {
 }
 rootProject.name = "marvel_pocket_challenge"
 include(":app")
+include(":api")
+include(":characters")

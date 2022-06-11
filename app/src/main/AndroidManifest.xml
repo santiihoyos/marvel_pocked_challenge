@@ -3,7 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.santiihoyos.marvelpocket">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission-sdk-23 android:name="android.permission.INTERNET" />
+
     <application
+        android:name=".MarvelPocketApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -15,7 +19,7 @@
         tools:targetApi="31">
 
         <activity
-            android:name="com.santiihoyos.marvelpocket.MainActivity"
+            android:name="com.santiihoyos.marvelpocket.ui.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.Marvel_pocket_guide">
             <intent-filter>
