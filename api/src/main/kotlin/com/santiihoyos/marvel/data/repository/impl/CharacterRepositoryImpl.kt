@@ -37,6 +37,18 @@ internal class CharacterRepositoryImpl(
     }
 
     override suspend fun getCharactersById(id: String): Result<CharacterResponse> {
-        return Result.failure(NotImplementedError())
+        return try {
+            val response = cloudCharacterDataSource.getCharacterById(id)
+            if (response.httpCode == 200 && response.data?.results != null) {
+                Result.success(response.data.results[0])
+            } else if (response.httpCode == 404) {
+                Result.failure(DataError.NotFoundError)
+            } else {
+                Result.failure(DataError.UnknownError)
+            }
+            ///TODO: manage all possible api code errors here..
+        } catch (ex: Exception) {
+            Result.failure(if (ex is DataError) ex else DataError.UnknownError)
+        }
     }
 }

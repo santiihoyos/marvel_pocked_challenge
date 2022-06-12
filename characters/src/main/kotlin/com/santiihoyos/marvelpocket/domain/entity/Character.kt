@@ -40,7 +40,12 @@ data class Character(
      */
     fun getPreviewImageUrl(): String? = imageUrl?.let { _imageUrl ->
 
-        return@let imageExtension?.let { _imageExtension -> "$_imageUrl/standard_xlarge.$_imageExtension" }
+        return@let imageExtension?.let { _imageExtension ->
+            "$_imageUrl/standard_xlarge.$_imageExtension".replace(
+                "http",
+                "https"
+            )
+        }
     }
 
     /**
@@ -50,6 +55,8 @@ data class Character(
      */
     fun getImageDetailUrl(): String? = imageUrl?.let { _imageUrl ->
 
-        return@let imageExtension?.let { _imageExtension -> "$_imageUrl/standard_fantastic.$_imageExtension" }
+        return@let imageExtension?.let { _imageExtension ->
+            "$_imageUrl/standard_fantastic.$_imageExtension".replace("http", "https")
+        }
     }
 }

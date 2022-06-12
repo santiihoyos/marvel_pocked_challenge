@@ -1,18 +1,16 @@
 package com.santiihoyos.marvelpocket.domain.usecase.impl
 
-import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.santiihoyos.marvel.data.repository.CharacterRepository
 import com.santiihoyos.marvelpocket.domain.entity.Character
 import com.santiihoyos.marvelpocket.domain.extension.toCharacter
-import com.santiihoyos.marvelpocket.domain.usecase.GetPaginatedCharacters
-import com.santiihoyos.marvelpocket.ui.feature.characters.BuildConfig
+import com.santiihoyos.marvelpocket.domain.usecase.GetPaginatedCharactersUseCase
 
 class GetPaginatedCharactersImpl(
     override var itemsPerPage: Int = 20,
     private val characterRepository: CharacterRepository
-) : GetPaginatedCharacters {
+) : GetPaginatedCharactersUseCase {
 
     override suspend fun getCharactersByPage(page: Int): Result<List<Character>> {
         val result = characterRepository.getCharactersByPage(
@@ -31,8 +29,10 @@ class GetPaginatedCharactersImpl(
         }
     }
 
-    override fun getCharactersPagingSource(): PagingSource<Int, Character> {
-        return CharacterPagingSource(this::getCharactersByPage)
+    override fun getCharactersPagingSource(
+        onLoad: (Int, Result<List<Character>>) -> Unit
+    ): PagingSource<Int, Character> {
+        return CharacterPagingSource(this::getCharactersByPage, onLoad)
     }
 }
 
@@ -44,7 +44,8 @@ class GetPaginatedCharactersImpl(
  * accomplishment to android specific implementations.
  */
 private class CharacterPagingSource(
-    private val onNextPage: suspend (page: Int) -> Result<List<Character>>
+    private val onNextPage: suspend (page: Int) -> Result<List<Character>>,
+    private val onLoad: (currentPage: Int, Result<List<Character>>) -> Unit
 ) : PagingSource<Int, Character>() {
 
     override fun getRefreshKey(state: PagingState<Int, Character>): Int? = null
@@ -52,6 +53,7 @@ private class CharacterPagingSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Character> {
         val nextPage = params.key ?: 1
         val characters = onNextPage(nextPage)
+        onLoad(nextPage, characters)
         return if (characters.isFailure) {
             LoadResult.Error(
                 characters.exceptionOrNull() ?: UnknownError()

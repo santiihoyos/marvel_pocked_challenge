@@ -85,14 +85,12 @@ internal interface RestMarvelDataSource : CloudCharacterDataSource {
             apiKey: String,
             privateKey: String
         ): OkHttpClient {
-
-            val okHttpBuilder = OkHttpClient.Builder()
-            okHttpBuilder.callTimeout(Duration.ofSeconds(2))
-            okHttpBuilder.addInterceptor(getAuthInterceptor(apiKey, privateKey))
-            okHttpBuilder.addInterceptor(HttpLoggingInterceptor().apply {
-                setLevel(HttpLoggingInterceptor.Level.BODY)
-            })
-            return okHttpBuilder.build()
+            return OkHttpClient.Builder().apply {
+                addInterceptor(getAuthInterceptor(apiKey, privateKey))
+                addInterceptor(HttpLoggingInterceptor().apply {
+                    setLevel(HttpLoggingInterceptor.Level.BODY)
+                })
+            }.build()
         }
 
         /**
@@ -108,11 +106,12 @@ internal interface RestMarvelDataSource : CloudCharacterDataSource {
                 val ts = Date().time.toString()
                 val hash = md5(ts + privateKey + apiKey)
                 val request = chain.request().newBuilder()
-                val url = chain.request().url.newBuilder()
-                url.addQueryParameter(API_KEY_PARAM_NAME, apiKey)
-                url.addQueryParameter("ts", ts)
-                url.addQueryParameter("hash", hash)
-                request.url(url.build())
+                val url = chain.request().url.newBuilder().apply {
+                    addQueryParameter(API_KEY_PARAM_NAME, apiKey)
+                    addQueryParameter("ts", ts)
+                    addQueryParameter("hash", hash)
+                }.build()
+                request.url(url)
                 chain.proceed(request.build())
             } catch (ex: Exception) {
                 Response.Builder()

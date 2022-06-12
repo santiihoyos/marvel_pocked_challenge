@@ -3,7 +3,8 @@ package com.santiihoyos.marvel.data.datasource.impl
 import com.santiihoyos.marvel.data.datasource.LocalCharacterDataSource
 import com.santiihoyos.marvel.data.entity.response.CharacterResponse
 
-internal class RoomCharacterDataSource : LocalCharacterDataSource {
+internal class LocalCharacterDataSourceImpl :
+    LocalCharacterDataSource {
 
     override suspend fun getFavoriteCharacters(): Result<List<CharacterResponse>> {
         TODO("Not yet implemented")

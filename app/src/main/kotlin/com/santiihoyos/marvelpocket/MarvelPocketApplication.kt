@@ -1,7 +1,7 @@
 package com.santiihoyos.marvelpocket
 
 import android.app.Application
-import com.santiihoyos.marvel.di.apiModule
+import com.santiihoyos.marvel.di.getApiModule
 import com.santiihoyos.marvelpocket.di.appModule
 import com.santiihoyos.marvelpocket.di.charactersModule
 import org.koin.android.ext.koin.androidContext
@@ -17,7 +17,11 @@ class MarvelPocketApplication : Application() {
             androidContext(this@MarvelPocketApplication)
             modules(
                 appModule,
-                apiModule,
+                getApiModule(
+                    apiBaseUrl = BuildConfig.API_BASE_URL,
+                    publicKey = BuildConfig.API_PUB_KEY,
+                    privateKey = BuildConfig.API_PRIV_KEY,
+                ),
                 charactersModule
             )
         }

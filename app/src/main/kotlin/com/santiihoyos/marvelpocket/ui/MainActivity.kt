@@ -7,38 +7,27 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.santiihoyos.marvelpocket.ui.feature.characters.CharacterList
-import com.santiihoyos.marvelpocket.ui.feature.characters.CharacterListViewModel
-import com.santiihoyos.marvelpocket.ui.feature.characters.CharacterListViewModelState
+import com.santiihoyos.marvelpocket.ui.feature.characters.detail.CharacterDetail
+import com.santiihoyos.marvelpocket.ui.feature.characters.list.CharacterListViewModel
+import com.santiihoyos.marvelpocket.ui.feature.characters.list.CharactersList
 import com.santiihoyos.marvelpocket.ui.theme.MarvelPocketTheme
-import org.koin.android.ext.android.inject
-import org.koin.androidx.compose.getViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : ComponentActivity() {
 
-    private val charactersListViewModel: CharacterListViewModel by viewModel()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lifecycleScope.launchWhenCreated {
-            charactersListViewModel.viewModelState.emit(
-                CharacterListViewModelState(firstLoading = true)
-            )
-        }
         setContent {
             MarvelPocketTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    CharactersLists(charactersListViewModel)
+                    CharactersLists(koinViewModel())
                 }
             }
         }
@@ -51,19 +40,23 @@ class MainActivity : ComponentActivity() {
  * //TODO: end doc..
  */
 @Composable
-fun CharactersLists(characterListViewModel: CharacterListViewModel) {
+fun CharactersLists(
+    characterListViewModel: CharacterListViewModel
+) {
     val navHostController = rememberNavController()
     NavHost(navController = navHostController, startDestination = "list") {
         composable("list") {
-            CharacterList(characterListViewModel = characterListViewModel)
-        }
-        /* composable("detail" + "/{id}") {
-            CharacterDetailView(
-                viewModel = viewModel(),
-                characterId = it.arguments?.get("id") as? String ?: "",
-                popBack = { navHostController.popBackStack() }
+            CharactersList(
+                characterListViewModel = characterListViewModel,
+                onNavigateToDetail = { id -> navHostController.navigate("detail/${id}") }
             )
         }
-         */
+        composable("detail/{id}") {
+            CharacterDetail(
+                characterId = it.arguments?.get("id") as? String ?: "",
+                onBack = { navHostController.popBackStack() },
+                characterDetailViewModel = koinViewModel()
+            )
+        }
     }
 }
