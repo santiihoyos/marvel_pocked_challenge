@@ -2,9 +2,11 @@ package com.santiihoyos.marvel.data.repository.impl
 
 import com.santiihoyos.marvel.data.datasource.CloudCharacterDataSource
 import com.santiihoyos.marvel.data.datasource.LocalCharacterDataSource
+import com.santiihoyos.marvel.data.entity.DataError
 import com.santiihoyos.marvel.data.entity.response.CharacterResponse
 import com.santiihoyos.marvel.data.repository.CharacterRepository
 import retrofit2.http.HTTP
+import javax.xml.crypto.Data
 
 /**
  * By using cloud and room DataSources implements
@@ -20,11 +22,18 @@ internal class CharacterRepositoryImpl(
         offset: Int,
         limit: Int
     ): Result<List<CharacterResponse>> {
-        val response = cloudCharacterDataSource.getCharacters(orderBy, offset, limit)
-        if (response.httpCode == 200 && response.data?.results != null ) {
-            return Result.success(response.data.results)
+        return try {
+            val response = cloudCharacterDataSource.getCharacters(orderBy, offset, limit)
+            if (response.httpCode == 200 && response.data?.results != null) {
+                Result.success(response.data.results)
+            } else if (response.httpCode == 404) {
+                Result.failure(DataError.NotFoundError)
+            } else {
+                Result.failure(DataError.UnknownError)
+            }
+        } catch (ex: Exception) {
+            Result.failure(if (ex is DataError) ex else DataError.UnknownError)
         }
-        return Result.failure(NotImplementedError())
     }
 
     override suspend fun getCharactersById(id: String): Result<CharacterResponse> {

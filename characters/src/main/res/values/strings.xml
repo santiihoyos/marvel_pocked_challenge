@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_dialog_title">Error!</string>
+    <string name="error_dialog_button_retry">retry</string>
+    <string name="error_loading_characters">"Sorry, There was an error loading characters, please Check you internet connection ans try again."</string>
+</resources>

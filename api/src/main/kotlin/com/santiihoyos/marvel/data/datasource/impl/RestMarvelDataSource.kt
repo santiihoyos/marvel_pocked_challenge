@@ -1,10 +1,12 @@
 package com.santiihoyos.marvel.data.datasource.impl
 
 import com.santiihoyos.marvel.data.datasource.CloudCharacterDataSource
+import com.santiihoyos.marvel.data.entity.DataError
 import com.santiihoyos.marvel.data.entity.response.BaseResponse
 import com.santiihoyos.marvel.data.entity.response.CharacterResponse
-import okhttp3.Interceptor
-import okhttp3.OkHttpClient
+import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.ResponseBody.Companion.toResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -14,7 +16,9 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
+import java.time.Duration
 import java.util.*
+import kotlin.Exception
 
 /**
  * Retrofit interface and default implementation for
@@ -83,6 +87,7 @@ internal interface RestMarvelDataSource : CloudCharacterDataSource {
         ): OkHttpClient {
 
             val okHttpBuilder = OkHttpClient.Builder()
+            okHttpBuilder.callTimeout(Duration.ofSeconds(2))
             okHttpBuilder.addInterceptor(getAuthInterceptor(apiKey, privateKey))
             okHttpBuilder.addInterceptor(HttpLoggingInterceptor().apply {
                 setLevel(HttpLoggingInterceptor.Level.BODY)
@@ -94,20 +99,32 @@ internal interface RestMarvelDataSource : CloudCharacterDataSource {
          * Creates Interceptor to provide required params by api
          * apikey, ts and hash query params
          */
+        @Throws(DataError::class)
         private fun getAuthInterceptor(
             apiKey: String,
             privateKey: String
         ): Interceptor = Interceptor { chain ->
-
-            val ts = Date().time.toString()
-            val hash = md5(ts + privateKey + apiKey)
-            val request = chain.request().newBuilder()
-            val url = chain.request().url.newBuilder()
-            url.addQueryParameter(API_KEY_PARAM_NAME, apiKey)
-            url.addQueryParameter("ts", ts)
-            url.addQueryParameter("hash", hash)
-            request.url(url.build())
-            chain.proceed(request.build())
+            try {
+                val ts = Date().time.toString()
+                val hash = md5(ts + privateKey + apiKey)
+                val request = chain.request().newBuilder()
+                val url = chain.request().url.newBuilder()
+                url.addQueryParameter(API_KEY_PARAM_NAME, apiKey)
+                url.addQueryParameter("ts", ts)
+                url.addQueryParameter("hash", hash)
+                request.url(url.build())
+                chain.proceed(request.build())
+            } catch (ex: Exception) {
+                Response.Builder()
+                    .request(chain.request())
+                    .protocol(Protocol.HTTP_1_1)
+                    .code(999)
+                    .message(ex.message.toString())
+                    .body(
+                        "{ code: ${999}, status: \"IOException\"}"
+                            .toResponseBody("application/json".toMediaType())
+                    ).build()
+            }
         }
 
 

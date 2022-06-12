@@ -9,11 +9,13 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.santiihoyos.marvelpocket.ui.feature.characters.CharacterList
 import com.santiihoyos.marvelpocket.ui.feature.characters.CharacterListViewModel
+import com.santiihoyos.marvelpocket.ui.feature.characters.CharacterListViewModelState
 import com.santiihoyos.marvelpocket.ui.theme.MarvelPocketTheme
 import org.koin.android.ext.android.inject
 import org.koin.androidx.compose.getViewModel
@@ -25,6 +27,11 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        lifecycleScope.launchWhenCreated {
+            charactersListViewModel.viewModelState.emit(
+                CharacterListViewModelState(firstLoading = true)
+            )
+        }
         setContent {
             MarvelPocketTheme {
                 Surface(
