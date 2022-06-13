@@ -16,6 +16,9 @@ dependencies {
     implementation(libs.retrofit.adapter)
     implementation(libs.okhttp)
     implementation(libs.okhttp.loggin)
-
     implementation(libs.koin.kotlin)
+
+    testImplementation(libs.test.jUnit)
+    testImplementation(libs.test.mockitoKtx)
+    testImplementation(libs.test.coroutines)
 }

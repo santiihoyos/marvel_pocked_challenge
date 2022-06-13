@@ -1,6 +1,7 @@
 package com.santiihoyos.marvelpocket.ui.feature.characters.list
 
 import androidx.annotation.StringRes
+import androidx.annotation.VisibleForTesting
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -27,6 +28,7 @@ data class CharacterListUiState(
 
     /**
      * Indicates viewModel is processing some task
+     * on init is true
      */
     val isLoading: Boolean = false,
 
@@ -53,22 +55,6 @@ class CharacterListViewModel(
         getPaginatedCharacters.itemsPerPage = 20
     }
 
-    /**
-     * Event from paginated list when a error happens
-     */
-    fun onLoadError() {
-        viewModelScope.launch {
-            uiState = uiState.copy(
-                isLoading = false,
-                errorText = R.string.error_loading_characters,
-            )
-        }
-    }
-
-    fun onFirstLoad() {
-        uiState = uiState.copy(isLoading = false)
-    }
-
     fun loadCharactersPager() {
         uiState = uiState.copy(
             isLoading = true,
@@ -92,7 +78,8 @@ class CharacterListViewModel(
      *
      * @param result- last result on pager.
      */
-    private fun onLoadCharactersListener(currentPage: Int, result: Result<List<Character>>) {
+    @VisibleForTesting
+    fun onLoadCharactersListener(currentPage: Int, result: Result<List<Character>>) {
         if (currentPage >= 0 && result.isSuccess) {
             uiState = uiState.copy(isLoading = false)
         } else if(result.isFailure) {

@@ -60,6 +60,8 @@ dependencies {
     implementation(libs.koin.compose)
 
     testImplementation(libs.test.jUnit)
+    testImplementation(libs.test.mockitoKtx)
+    testImplementation(libs.test.coroutines)
 
     androidTestImplementation(libs.androidx.ext.jUnit)
     androidTestImplementation(libs.test.expresso)

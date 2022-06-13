@@ -4,6 +4,7 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.santiihoyos.marvel.data.repository.CharacterRepository
 import com.santiihoyos.marvelpocket.domain.entity.Character
+import com.santiihoyos.marvelpocket.domain.entity.error.CharacterError
 import com.santiihoyos.marvelpocket.domain.extension.toCharacter
 import com.santiihoyos.marvelpocket.domain.usecase.GetPaginatedCharactersUseCase
 
@@ -25,7 +26,7 @@ class GetPaginatedCharactersImpl(
                 }.toList()
             )
         } else {
-            Result.failure(Exception("Error on ${this::class.java.name}"))
+            Result.failure(CharacterError.UnknownCharacterError)
         }
     }
 
@@ -43,7 +44,7 @@ class GetPaginatedCharactersImpl(
  * libraries agnostic so we keep it here to allow reuse without forcing api module
  * accomplishment to android specific implementations.
  */
-private class CharacterPagingSource(
+class CharacterPagingSource(
     private val onNextPage: suspend (page: Int) -> Result<List<Character>>,
     private val onLoad: (currentPage: Int, Result<List<Character>>) -> Unit
 ) : PagingSource<Int, Character>() {
