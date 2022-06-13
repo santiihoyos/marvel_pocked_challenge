@@ -24,18 +24,16 @@ adb shell am start -n "com.santiihoyos.marvelpocket/com.santiihoyos.marvelpocket
                    -c android.intent.category.LAUNCHER
 ```
 
-## Screenshots
-<img src="docs/example_detail.png" width="300"><img src="docs/assets/example_list.png" width="300">
-
 ## Features
 - Android Api > 21
 - Google apps architecture (latest)
 - 100% composable
 - Versions catalog
-- Paging (android)
 - KTS for Gradle
+- Material desing 3 initial support
 - Koin as Dependency injector
 - Coil as image manager
+- Paging (android)
 - etc...
 
 ## Architecture notes
@@ -45,11 +43,11 @@ There are 3 gradle modules 2 android (:app, :characters) and 1 kotlin standalone
 In app module is main app logic like entry points and HomeScreen it depends on `:characters` feature module (witch contains
 all related code with Character feature) and `:api` (witch contains all related code to communicate with server by using Rest endpoints).
 
-### layers
+## layers
 
 By using [Google's architecture definition](https://developer.android.com/topic/architecture) there are:
 
-#### UI
+### UI
 Only on :app and :characters module there are "Composables" each one has it ViewModel. (see ui packages).
 They implement UDF(Unidirectional data flow) patter states as source of truth from view models and Event system
 to notify user inputs from UI to ViewModels.
@@ -67,3 +65,6 @@ all data functionality and manages data layer errors.
 ## Testing
 Character list flow is tested from ViewModel to DataSource you can see unit test packages in every module.
 Tests run by using mockito and coroutines test library.
+
+# Screenshots
+<img src="docs/img/example_list.png" width="300"> -> <img src="docs/img/example_detail.png" width="300">
