@@ -94,7 +94,7 @@ private fun PortraitInfoContainer(
 }
 
 @Composable
-fun LandscapeInfoContainer(
+private fun LandscapeInfoContainer(
     characterDetailViewModel: CharacterDetailViewModel,
     characterId: String,
 ) {

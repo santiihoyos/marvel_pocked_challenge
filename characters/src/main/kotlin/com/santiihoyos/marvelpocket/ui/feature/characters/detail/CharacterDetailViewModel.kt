@@ -33,17 +33,6 @@ data class CharacterDetailUiState(
 )
 
 /**
- * CharacterDetailViewModel state
- */
-data class CharacterDetailViewModelState(
-
-    /**
-     * Id of character that view requires.
-     */
-    val characterId: String? = null,
-)
-
-/**
  * ViewModel class for Character detail views.
  */
 class CharacterDetailViewModel(

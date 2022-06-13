@@ -37,7 +37,7 @@ class HomeActivity : ComponentActivity() {
  * //TODO: end doc..
  */
 @Composable
-fun HomeContainer() {
+private fun HomeContainer() {
     MarvelPocketTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
