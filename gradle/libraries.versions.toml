@@ -32,6 +32,8 @@ androidxTestRules = "1.4.0"     # https://developer.android.com/jetpack/androidx
 androidxTestRunner = "1.4.0"    # https://developer.android.com/jetpack/androidx/releases/test
 androidxJUnitExt = "1.1.3"      # https://developer.android.com/jetpack/androidx/releases/test
 koltinCoroutinesTest = "1.5.1"  # https://developer.android.com/codelabs/advanced-android-kotlin-training-testing-survey
+mockito-kotlin = "4.0.0"        # https://github.com/mockito/mockito-kotlin
+test-coroutines = "1.6.2"       # https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-test/
 
 [libraries]
 kotlin = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
@@ -77,6 +79,8 @@ androidx-ext-jUnit = { module = "androidx.test.ext:junit", version.ref = "androi
 androidx-test-core = { module = "androidx.test:core", version.ref = "androidxTest" }
 androidx-test-rules = { module = "androidx.test:rules", version.ref = "androidxTestRules" }
 androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidxTestRunner" }
+test-mockitoKtx = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockito-kotlin" }
+test-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "test-coroutines" }
 
 [plugins]
 android-library = { id = "com.android.library", version.ref = "androidPlugin"}
