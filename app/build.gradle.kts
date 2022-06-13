@@ -24,14 +24,14 @@ android {
     buildTypes {
         getByName("debug") {
             buildConfigField("String", "API_BASE_URL", "\"https://gateway.marvel.com\"")
-            buildConfigField("String", "API_PUB_KEY", "\"d1c4c7d44145047fd4f399ba009c62fa\"")
-            buildConfigField("String", "API_PRIV_KEY", "\"059daac047ad259a2c2d87f4011e3ddea540be99\"")
+            buildConfigField("String", "API_PUB_KEY", "\"{YOUR_API}\"")
+            buildConfigField("String", "API_PRIV_KEY", "\"YOUR_API\"")
         }
         getByName("release") {
             // isMinifyEnabled = true we need add rules to entities etc...
             buildConfigField("String", "API_BASE_URL", "\"https://gateway.marvel.com\"")
-            buildConfigField("String", "API_PUB_KEY", "\"d1c4c7d44145047fd4f399ba009c62fa\"")
-            buildConfigField("String", "API_PRIV_KEY", "\"059daac047ad259a2c2d87f4011e3ddea540be99\"")
+            buildConfigField("String", "API_PUB_KEY", "\"{YOUR_API}\"")
+            buildConfigField("String", "API_PRIV_KEY", "\"YOUR_API\"")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
