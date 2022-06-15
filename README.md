@@ -40,27 +40,28 @@ adb shell am start -n "com.santiihoyos.marvelpocket/com.santiihoyos.marvelpocket
 
 There are 3 gradle modules 2 android (:app, :characters) and 1 kotlin standalone (:api) 
 
-In app module is main app logic like entry points and HomeScreen it depends on `:characters` feature module (witch contains
+In app module is main app logic like entry points and HomeScreen; it depends on `:characters` feature module (witch contains
 all related code with Character feature) and `:api` (witch contains all related code to communicate with server by using Rest endpoints).
+Another esponsability of :app is initialize injector graph.
 
 ## layers
 
 By using [Google's architecture definition](https://developer.android.com/topic/architecture) there are:
 
 ### UI
-Only on :app and :characters module there are "Composables" each one has it ViewModel. (see ui packages).
-They implement UDF(Unidirectional data flow) patter states as source of truth from view models and Event system
+Only in :app and :characters module there are "Composables" each one has it ViewModel. (see ui packages).
+They implement UDF(Unidirectional data flow) pattern state as source of truth from view models and Event system like
 to notify user inputs from UI to ViewModels.
 
 ### Domain
-Contains app internal business logic entities and UseCases to reuse login on different ViewModels.
-Functions on UseCases are main thread safe. They speak with repositories and provides specific
+Contains app internal business logic entities and UseCases to reuse on different ViewModels.
+Functions into UseCases are main thread safe. They speak with repositories and provides specific
 business app logic error management.
 
 ### Data
-All data business logic is in :api module, that module contains DataSources interfaces and implementations
-to connect with server Rest endpoints, those data sources are used by Repository witch exposes to domain layer
-all data functionality and manages data layer errors.
+data business logic is in :api module, that module contains DataSources interfaces and implementations
+to connect with server Rest endpoints(and local datasource to support in the future for example favorites), 
+those data sources are used by Repository witch exposes to domain data functionality and manages data layer errors.
 
 ## Testing
 Character list flow is tested from ViewModel to DataSource you can see unit test packages in every module.
