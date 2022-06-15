@@ -48,13 +48,6 @@ class CharacterListViewModel(
     var uiState by mutableStateOf(CharacterListUiState(isLoading = true))
         private set
 
-    /**
-     * ensure page limits and initialize listening to [this.viewModelState].
-     */
-    init {
-        getPaginatedCharacters.itemsPerPage = 20
-    }
-
     fun loadCharactersPager() {
         uiState = uiState.copy(
             isLoading = true,
@@ -67,7 +60,10 @@ class CharacterListViewModel(
                     prefetchDistance = 2
                 ),
                 pagingSourceFactory = {
-                    getPaginatedCharacters.getCharactersPagingSource(::onLoadCharactersListener)
+                    getPaginatedCharacters.getCharactersPagingSource(
+                        itemsPerPage = 20,
+                        onLoad = ::onLoadCharactersListener
+                    )
                 },
             ).flow.cachedIn(viewModelScope)
         )
@@ -82,7 +78,7 @@ class CharacterListViewModel(
     fun onLoadCharactersListener(currentPage: Int, result: Result<List<Character>>) {
         if (currentPage >= 0 && result.isSuccess) {
             uiState = uiState.copy(isLoading = false)
-        } else if(result.isFailure) {
+        } else if (result.isFailure) {
             uiState = uiState.copy(isLoading = false, errorText = R.string.error_loading_characters)
         }
     }

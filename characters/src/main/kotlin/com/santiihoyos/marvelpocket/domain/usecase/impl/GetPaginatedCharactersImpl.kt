@@ -9,11 +9,10 @@ import com.santiihoyos.marvelpocket.domain.extension.toCharacter
 import com.santiihoyos.marvelpocket.domain.usecase.GetPaginatedCharactersUseCase
 
 class GetPaginatedCharactersImpl(
-    override var itemsPerPage: Int = 20,
     private val characterRepository: CharacterRepository
 ) : GetPaginatedCharactersUseCase {
 
-    override suspend fun getCharactersByPage(page: Int): Result<List<Character>> {
+    override suspend fun getCharactersByPage(page: Int, itemsPerPage: Int): Result<List<Character>> {
         val result = characterRepository.getCharactersByPage(
             limit = itemsPerPage,
             offset = page * itemsPerPage,
@@ -31,9 +30,10 @@ class GetPaginatedCharactersImpl(
     }
 
     override fun getCharactersPagingSource(
+        itemsPerPage: Int,
         onLoad: (Int, Result<List<Character>>) -> Unit
     ): PagingSource<Int, Character> {
-        return CharacterPagingSource(this::getCharactersByPage, onLoad)
+        return CharacterPagingSource(itemsPerPage, this::getCharactersByPage, onLoad)
     }
 }
 
@@ -45,7 +45,8 @@ class GetPaginatedCharactersImpl(
  * accomplishment to android specific implementations.
  */
 class CharacterPagingSource(
-    private val onNextPage: suspend (page: Int) -> Result<List<Character>>,
+    private val itemsPerPage: Int,
+    private val onNextPage: suspend (page: Int, itemsPerPage: Int) -> Result<List<Character>>,
     private val onLoad: (currentPage: Int, Result<List<Character>>) -> Unit
 ) : PagingSource<Int, Character>() {
 
@@ -53,7 +54,7 @@ class CharacterPagingSource(
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Character> {
         val nextPage = params.key ?: 1
-        val characters = onNextPage(nextPage)
+        val characters = onNextPage(nextPage, itemsPerPage)
         onLoad(nextPage, characters)
         return if (characters.isFailure) {
             LoadResult.Error(

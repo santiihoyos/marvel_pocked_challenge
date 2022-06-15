@@ -1,7 +1,6 @@
 package com.santiihoyos.marvelpocket.ui.feature.characters.list
 
 import androidx.paging.PagingSource
-import com.santiihoyos.marvelpocket.domain.entity.Character
 import com.santiihoyos.marvelpocket.domain.usecase.GetPaginatedCharactersUseCase
 import com.santiihoyos.marvelpocket.domain.usecase.impl.CharacterPagingSource
 import com.santiihoyos.marvelpocket.ui.feature.characters.CharacterMocks
@@ -24,7 +23,7 @@ class CharacterListViewModelTest {
     @OptIn(ExperimentalCoroutinesApi::class)
     fun `test init uiState is loading`() = runTest {
         val getUseCaseMock = mock<GetPaginatedCharactersUseCase>()
-        whenever(getUseCaseMock.getCharactersByPage(any())).then {
+        whenever(getUseCaseMock.getCharactersByPage(any(), any())).then {
             return@then Result.success(CharacterMocks.page1)
         }
         val viewModel = CharacterListViewModel(getUseCaseMock)
@@ -39,13 +38,14 @@ class CharacterListViewModelTest {
     @OptIn(ExperimentalCoroutinesApi::class)
     fun `test uiState is loading with CharacterPagingSource`() = runTest {
         val getUseCaseMock = mock<GetPaginatedCharactersUseCase>()
-        whenever(getUseCaseMock.getCharactersByPage(any())).then {
+        whenever(getUseCaseMock.getCharactersByPage(any(), any())).then {
             return@then Result.success(CharacterMocks.page1)
         }
         val viewModel = CharacterListViewModel(getUseCaseMock)
-        whenever(getUseCaseMock.getCharactersPagingSource(any())).then {
+        whenever(getUseCaseMock.getCharactersPagingSource(any(), any())).then {
             runTest {
                 CharacterPagingSource(
+                    3,
                     getUseCaseMock::getCharactersByPage,
                     viewModel::onLoadCharactersListener
                 )
@@ -64,10 +64,11 @@ class CharacterListViewModelTest {
     fun `test when load some page success isLoading is false`() = runTest {
         val getUseCaseMock = mock<GetPaginatedCharactersUseCase>()
         val viewModel = CharacterListViewModel(getUseCaseMock)
-        whenever(getUseCaseMock.getCharactersPagingSource(any())).then {
+        whenever(getUseCaseMock.getCharactersPagingSource(any(), any())).then {
             runTest {
                 CharacterPagingSource(
-                    { Result.success(CharacterMocks.page1) },
+                    3,
+                    { _, _ -> Result.success(CharacterMocks.page1) },
                     viewModel::onLoadCharactersListener
                 )
             }
@@ -84,10 +85,11 @@ class CharacterListViewModelTest {
         val getUseCaseMock = mock<GetPaginatedCharactersUseCase>()
         val viewModel = CharacterListViewModel(getUseCaseMock)
         val pagingSource = CharacterPagingSource(
-            { Result.success(CharacterMocks.page1) },
+            3,
+            { _, _ -> Result.success(CharacterMocks.page1) },
             viewModel::onLoadCharactersListener
         )
-        whenever(getUseCaseMock.getCharactersPagingSource(any())).then { pagingSource }
+        whenever(getUseCaseMock.getCharactersPagingSource(any(), any())).then { pagingSource }
         viewModel.loadCharactersPager()
         pagingSource.load(PagingSource.LoadParams.Refresh(key = 1, loadSize = 3, false))
         assert(
@@ -102,10 +104,11 @@ class CharacterListViewModelTest {
         val getUseCaseMock = mock<GetPaginatedCharactersUseCase>()
         val viewModel = CharacterListViewModel(getUseCaseMock)
         val pagingSource = CharacterPagingSource(
-            { Result.failure(Exception()) },
+            3,
+            { _, _ -> Result.success(CharacterMocks.page1) },
             viewModel::onLoadCharactersListener
         )
-        whenever(getUseCaseMock.getCharactersPagingSource(any())).then { pagingSource }
+        whenever(getUseCaseMock.getCharactersPagingSource(any(), any())).then { pagingSource }
         viewModel.loadCharactersPager()
         pagingSource.load(PagingSource.LoadParams.Refresh(key = 1, loadSize = 3, false))
         assert(
